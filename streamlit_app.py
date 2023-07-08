@@ -6,6 +6,9 @@ from hugchat import hugchat
 
 st.set_page_config(page_title="HugChat - An LLM-powered Streamlit app")
 
+# Create the Chatbot instance
+chatbot = hugchat.ChatBot()
+
 # Sidebar contents
 with st.sidebar:
     st.title('🤗💬 HugChat App')
@@ -46,7 +49,6 @@ with input_container:
 # Response output
 ## Function for taking user prompt as input followed by producing AI generated responses
 def generate_response(prompt):
-    chatbot = hugchat.ChatBot()
     response = chatbot.chat(prompt)
     return response
 
@@ -56,8 +58,9 @@ with response_container:
         response = generate_response(user_input)
         st.session_state.past.append(user_input)
         st.session_state.generated.append(response)
-        
-    if st.session_state['generated']:
+        message(user_input, is_user=True, key=str(len(st.session_state.past) - 1) + '_user')
+        message(response, key=str(len(st.session_state.generated) - 1))
+    else:
         for i in range(len(st.session_state['generated'])):
             message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
             message(st.session_state["generated"][i], key=str(i))
